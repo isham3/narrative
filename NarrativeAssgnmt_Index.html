@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<!--this doesn't seem to help-->
+		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+		<title>Process local CSV file</title>
+		<script src='https://d3js.org/d3.v5.min.js'></script>
+		<style> rect {fill: lightblue; stroke: black; }</style>
+		<style type="text/css">
+					
+					.axis path,
+					.axis line {
+						fill: none;
+						stroke: black;
+						shape-rendering: crispEdges;
+					}
+					
+					.axis text {
+						font-family: sans-serif;
+						font-size: 9px;
+					}
+
+				</style>
+	</head>
+	<body>
+
+	<h2>Cars and their Fule Efficiency 2017</h2>
+	<p>We collected data such as Fuel Type, # of Cylinders, AverageHighwayMPH, AverageCityMPH for different car companys in the year 2017 </p>
+	<p>The we plotted this data using different parameters such as Fuel & # of cyliunders to depict the best car in terms of AverageHighwayMPH/AverageCityMPH</p>
+	
+	<div class="container">
+		<form>
+		  Select the Fule Type for your Car.
+		  <br><input type="radio" name="FuleType" value="Gasoline" checked> Gasoline<br>
+		  <input type="radio" name="FuleType" value="Diesel"> Diesel<br><
+		  <input type="radio" name="FuleType" value="Electricity"> Electricity<br>
+		</form>
+	</div>
+	
+	<form>
+	  Select the Number of Cylinders you want to have in your car.
+	  <br><input type="radio" name="Cylinders" value="2" checked> 2<br>
+	  <input type="radio" name="Cylinders" value="3"> 3<br>
+	  <input type="radio" name="Cylinders" value="4"> 4<br>
+	  <input type="radio" name="Cylinders" value="6"> 6<br>
+	  <input type="radio" name="Cylinders" value="8"> 8<br>
+	  <input type="radio" name="Cylinders" value="10"> 10<br>
+	  <input type="radio" name="Cylinders" value="12"> 12<br>
+
+	</form>
+	<p> Let's check the best car in 2017 with highest AverageCityMPH <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
+	
+	<svg width=700 height=700>
+	</svg>
+	<script>
+		async function fnAvgCityMPG() {
+			var f = "https://github.com/isham3/Narrative_Viz_CS498/blob/master/InputData_Final.csv";
+			const data = await d3.csv(f);
+			//const data = await d3.csv("https://flunky.github.io/cars2017.csv");
+			//Setting the variables
+			var xs = d3.scaleBand()
+			           .domain(['Audi','Bentley','BMW','Cadillac','Chevrolet','Chrysler','Dodge','Ferrari','Ford',
+					   'Genesis','GMC','Infiniti','Jaguar','Jeep','Kia','Land Rover','Lexus','Maserati','McLaren','Mercedes','Nissan','Porsche','Ram','Roush','Toyota'])
+					   .range([0,600]);
+
+			var ys = d3.scaleLinear()
+			  .domain([10,150])
+			  .range([600,0]);
+			
+			//Setting the Axis
+			var xAxis = d3.axisBottom(xs);
+						 			
+			var yAxis = d3.axisLeft(ys)
+						  .tickValues([10,30,50,70,90,110,130,150])
+						  .ticks(8).tickFormat(d3.format("~s"));	
+            var barWidth = xs.bandwidth();
+			
+			//Reading the parameters
+			var radios1 = document.getElementsByName("FuleType");
+			var fuel = " ";
+			var radios2 = document.getElementsByName("Cylinders");
+			var cyl = " ";
+			
+			for (var i = 0, length = radios1.length; i < length; i++)
+			{
+			 if (radios1[i].checked)
+			 {
+			  // do whatever you want with the checked radio
+			  fuel= radios1[i].value;
+
+			  // only one radio can be logically checked, don't check the rest
+			  break;
+			 }
+			}						  
+			
+			for (var i = 0, length = radios2.length; i < length; i++)
+			{
+			 if (radios2[i].checked)
+			 {
+			  // do whatever you want with the checked radio
+			  cyl= radios2[i].value;
+
+			  // only one radio can be logically checked, don't check the rest
+			  break;
+			 }
+			}	
+				
+			console.log("FuelType is:"+fuel);
+			console.log("Cylinders is:"+cyl);
+			
+			d3.select("svg")
+			  .append("g")
+			  .attr("transform","translate("+50+","+50+")")
+			  .selectAll("rect")
+			  .data(data)
+			  .enter()
+			  .attr("width",barWidth)
+			  .attr("height",function(d){return ys(parseInt(d.AverageCityMPG));})	
+			  .attr("x",function(d,i){return barWidth+xs(d);})
+			  .attr("y",function(d){return 600-ys(parseInt(d.AverageCityMPG));});
+		    
+			d3.select("svg")
+			  .attr("height",600+2*50)
+			  .attr("width",600+2*50)  
+			  .append("g")
+			  .attr("class", "yAxis axis")	
+			  .attr("transform","translate("+50+","+50+")")	  
+			  .call(yAxis); 
+   
+			d3.select("svg")
+			  .attr("height",600+2*50)
+			  .attr("width",600+2*50)  
+			  .append("g")
+			  .attr("class", "xAxis axis")		  
+			  .attr("transform","translate("+50+","+650+")")
+			  .call(xAxis);
+			  
+			// now rotate text on x axis
+			// first move the text left so no longer centered on the tick
+			// then rotate up to get 45 degrees.
+			d3.selectAll(".xAxis text")  // select all the text elements for the xaxis
+			  .attr("transform", function(d) {
+				 return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-30)";
+			 });
+		
+			// now add titles to the axes
+			d3.append("text")
+				.attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+				.attr("transform", "translate("+ (padding/2) +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+				.text("AverageCityMPG");
+
+			d3.append("text")
+				.attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+				.attr("transform", "translate("+ (width/2) +","+(height-(padding/3))+")")  // centre below axis
+				.text("Car Make");
+		}
+		</script>
+	</body>
+</html>
