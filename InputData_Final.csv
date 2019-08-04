@@ -1,4 +1,4 @@
-Make,Fuel,Engine Cylinders,ActualAverageCityMPG,ActualAverageHighwayMPG,Average City MPG,Average Highway MPG,Number of Records
+Make,Fuel,EngineCylinders,ActualAverageCityMPG,ActualAverageHighwayMPG,AverageCityMPG,AverageHighwayMPG,Number of Records
 Acura,Gasoline,4,25,35,25,35,1
 Acura,Gasoline,6,21,28,21,28,1
 Alfa Romeo,Gasoline,4,24,33,24,33,1
