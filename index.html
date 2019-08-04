@@ -24,22 +24,27 @@
 
 				</style>
 	</head>
-	<body>
-
-	<h2>Most Fuel Efficient Cars of 2017</h2>
-	<p>We collected data such as Fuel Type, # of Cylinders, AverageHighwayMPH, AverageCityMPH for different car companies in the year 2017. </p>
-	<p>Then we plotted this data using different parameters such as Fuel & # of cylinders to depict the best car in terms of AverageHighwayMPH/AverageCityMPH</p>
+	<body bgcolor="F0F8FF">
+	
+	<h2><font face="verdana" color="green">Most Fuel Efficient Cars of 2017</font></h2>
+	
+	<img style = "width: 75%; height: 5%; ; " src="https://isham3.github.io/narrative/action-asphalt-automobile-593172.jpg"  alt="Photo by Taras Makarenko from Pexels"  />	
+	<p><font face="verdana" color="black">We collected data such as Fuel Type, # of Cylinders, AverageHighwayMPH, AverageCityMPH for different car companies in the year 2017. </font></p>
+	<p><font face="verdana" color="black">Then we plotted this data using different parameters such as Fuel & # of cylinders to depict the best car in terms of AverageHighwayMPH/AverageCityMPH. </font></p>
 	
 	<div class="container">
 		<form>
-		  Select the Fule Type for your Car.
+		<font face="verdana" color="black">Select the Fule Type for your Car.
 		  <br><input type="radio" name="FuleType" value="Gasoline" checked> Gasoline<br>
 		  <input type="radio" name="FuleType" value="Diesel"> Diesel<br>
-		  <input type="radio" name="FuleType" value="Electricity"> Electricity<br>
+		  <input type="radio" name="FuleType" value="Electricity"> Electricity<br><br><br>
+		</font>
 		</form>
 	</div>
 	
+
 	<form>
+		<font face="verdana" color="black">
 	  Select the Number of Cylinders you want to have in your car.
 	  <br><input type="radio" name="Cylinders" value="2" checked> 2<br>
 	  <input type="radio" name="Cylinders" value="3"> 3<br>
@@ -48,13 +53,32 @@
 	  <input type="radio" name="Cylinders" value="8"> 8<br>
 	  <input type="radio" name="Cylinders" value="10"> 10<br>
 	  <input type="radio" name="Cylinders" value="12"> 12<br>
-
+</font>
 	</form>
-	<p> Let's check the best car in 2017 with highest AverageCityMPH <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
+	<p><font face="verdana" color="black"> Let's check the best car in 2017 with highest AverageCityMPH : <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
 	
 	<svg width=700 height=700>
 	</svg>
 	<script>
+		// assign onclick handler to hazard checkbox
+	document.getElementByName('FuleType').onclick = function() {
+
+    // is hazard checkbox checked?
+    var fuel = this.checked; // true or false
+
+    // get list of radio buttons with name 'ship'
+    var radios = this.form.elements['Cylinders'];
+
+    // loop through list of radio buttons
+    for (var i=0, len=radios.length; i<len; i++) {
+        var r = radios[i]; // current radio button
+
+        if ( fuel.value=='Electricity' ) { // hazard checkbox checked
+		    r.value='0';
+            r.disabled = true; // set disabled
+		
+		}
+	}
 		async function fnAvgCityMPG() {
 			var f = "https://isham3.github.io/narrative/InputData_Final.csv";
 			const data = await d3.csv(f);
