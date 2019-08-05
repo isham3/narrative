@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="chrome=1" />
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-		<!--this doesn't seem to help-->
-		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
 		<title>Fuel Efficiency | 2017</title>
 		<!--script src='https://d3js.org/d3.v5.min.js'></script-->
 		<script src='https://d3js.org/d3.v5.min.js'></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.3.2/d3-annotation.min.js"></script>
-		<style> rect {fill: #E52B50; stroke: black; }
+		<style> circle {fill: #FFAB33; stroke: black;} </style>
+		<style> rect {fill: #FFAB33; stroke: black; }
 			#tooltip {
 						opacity :0;
 						position :absolute;
@@ -34,14 +31,17 @@
 						font-size: 9px;
 					}
 					
-					.rect:hover {
-						  fill: orangered ;
+					.line {
+							  fill: none;
+							  stroke: steelblue;
+							  stroke-width: 2px;
 						}
+						
 					.d3-tip {
 						  line-height: 1;
 						  font-weight: bold;
 						  padding: 12px;
-						  background: rgba(0, 0, 0, 0.8);
+						  background: #794B08;
 						  color: #fff;
 						  border-radius: 2px;
 						}
@@ -75,17 +75,93 @@
 							}
 				</style>
 	</head>
-	<body bgcolor="F0F8FF">
+	<body bgcolor="F0F8FF" onload='init()'>
 	
-	<h2><font face="verdana" color="green">Most Fuel Efficient Cars of 2017</font></h2>
+	<h2><font face="Helvetica" color="#BA4A00">Most Fuel Efficient Cars of 2017</font></h2>
 	
 	<img style = "width: 75%; height: 5%; ; " src="https://isham3.github.io/narrative/action-asphalt-automobile-593172.jpg"  alt="Photo by Taras Makarenko from Pexels"  />	
-	<p><font face="verdana" color="black">We collected data such as Fuel Type, # of Cylinders, AverageHighwayMPH, AverageCityMPH for different car companies in the year 2017. </font></p>
-	<p><font face="verdana" color="black">Then we plotted this data using different parameters such as Fuel & # of cylinders to depict the best car in terms of AverageHighwayMPH/AverageCityMPH. </font></p>
+	<p><font face="Helvetica" color="black">We collected data such as Fuel Type, # of Cylinders, AverageHighwayMPH, AverageCityMPH for different car companies in the year 2017. </font></p>
+	<p><font face="Helvetica" color="black"> Below depicted is a scatter-plot of all the cars plotting the Average City MPG horizontally on a logarithmic scale
+and the Average Hightway MPG vertically on a logarithmic scale. </p>
+	<h4><font face="Helvetica" color="black"> Scatterplot of HighwayMPG vs CityMPG for the cars </font></h4>
+	<svg id="svg3" width=800 height=800>
+	</svg>
+	<script>
+		async function init() {
+			const data = await d3.csv("https://flunky.github.io/cars2017.csv");
+			var xs = d3.scaleLog()
+			  .domain([10,150])
+			  .range([0,700])
+			  .base(10);
+
+			var ys = d3.scaleLog()
+			  .domain([10,150])
+			  .range([700,0])
+			  .base(10);
+			
+			
+			var xAxis = d3.axisBottom(xs)
+						  .tickValues([10, 20, 50,100])
+						  .ticks(4).tickFormat(d3.format("~s"));
+			
+			var yAxis = d3.axisLeft(ys)
+						  .tickValues([10, 20, 50,100])
+						  .ticks(4).tickFormat(d3.format("~s"));	
+
+			var tip = d3.tip()
+					  .attr('class', 'd3-tip')
+					  .offset([-10, 0])
+					  .html(function(d) {
+						return "<strong>"+ d.Make+" | AvgHighwayMPG: </strong> <span style='color:#0DC706'>" + d.AverageHighwayMPG + "</span></br>" + 
+						        "<strong>AvgCityMPG: </strong> <span style='color:#0DC706'>" + d.AverageCityMPG + "</span>";
+					  });
+			
+			d3.select("#svg3")
+			  .append("g")
+			  .attr("transform","translate("+50+","+50+")")
+			  .selectAll("circle")
+			  .data(data)
+			  .enter()
+			  .append("circle")
+			  .attr("cx",function(d,i){return xs(parseInt(d.AverageCityMPG));})
+			  .attr("cy",function(d,i){return ys(parseInt(d.AverageHighwayMPG));})
+			  .attr("r",function(d,i){return parseInt(d.EngineCylinders)+10;})
+			  .on('mouseover',tip.show)
+			  .on('mouseout', tip.hide)
+			  .call(tip);
+			  
+			  
+			d3.select("#svg3")
+			  .attr("height",700+2*50)
+			  .attr("width",700+2*50)  
+			  .append("g")
+			  .attr("transform","translate("+50+","+50+")")	  
+			  .call(yAxis); 
+	   
+			d3.select("#svg3")
+			  .attr("height",700+2*50)
+			  .attr("width",700+2*50)  
+			  .append("g")
+			  .attr("transform","translate("+50+","+750+")")		  
+			  .call(xAxis);
+			
+			d3.select("body")
+			  .append("svg:svg3")
+              .attr("width", 700)
+              .attr("height", 700)
+			  .append("text")
+			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+              .attr("transform", "translate("+ (700/2) +","+(700+(50/3))+")")  // centre below axis
+              .text("Date");
+			  
+		}
+	</script>
+	
+	<p><font face="Helvetica" color="black">We have also plotted this data using different parameters such as Fuel & # of cylinders to depict the best car in terms of AverageHighwayMPH/AverageCityMPH. </font></p>
 	
 	<div class="container">
 		<form>
-		<font face="verdana" color="black">Select the Fule Type for your Car.
+		<font face="Helvetica" color="black">Select the Fule Type for your Car.
 		  <br><input type="radio" name="FuleType" value="Gasoline" checked> Gasoline<br>
 		  <input type="radio" name="FuleType" value="Diesel"> Diesel<br>
 		  <input type="radio" name="FuleType" value="Electricity"> Electricity<br><br><br>
@@ -113,7 +189,7 @@
 	
 
 	<form>
-		<font face="verdana" color="black">
+	 <font face="Helvetica" color="black">
 	  Select the Number of Cylinders you want to have in your car.
 	  <br><input type="radio" name="Cylinders" value="2" checked> 2<br>
 	  <input type="radio" name="Cylinders" value="3"> 3<br>
@@ -122,11 +198,11 @@
 	  <input type="radio" name="Cylinders" value="8"> 8<br>
 	  <input type="radio" name="Cylinders" value="10"> 10<br>
 	  <input type="radio" name="Cylinders" value="12"> 12<br>
-</font>
+	</font>
 	</form>
-	<p><font face="verdana" color="black"> Let's check the best car in 2017 with highest AverageCityMPH : <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
+	<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest AverageCityMPH of the Fule & Cylinders selected : <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
 	
-	<svg width=980 height=700>
+	<svg id="svg1" width=980 height=700>
 	</svg>
 	<div id="tooltip"></div>
 	<script>
@@ -159,20 +235,9 @@
 					  .attr('class', 'd3-tip')
 					  .offset([-10, 0])
 					  .html(function(d) {
-						return "<strong>AverageCityMPG for "+ d.Make+" is: </strong> <span style='color:red'>" + d.ActualAverageCityMPG + "</span>";
+						return "<strong>AverageCityMPG for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageCityMPG + "</span>";
 					  });
-					  
-			var filteredFuel = data.filter(function (data) {
-												return (data.Fuel ==fuel);
-											});
-											
-			var filtered = data.filter(function (data) {
-												return (data.EngineCylinders ==+cyl);
-											});
-			var highestMPG = Math.max(+filtered.ActualAverageCityMPG);
-			
-			console.log(highestMPG);
-			
+						
 			// Features of the annotation
 			const annotations = [
 									{
@@ -192,7 +257,7 @@
 									  dy: 137,
 									  dx: 262
 										
-									}].map(function(d){ d.color = "blue"; return d})
+									}].map(function(d){ d.color = "black"; return d})
 
 			// Add annotation to the chart
 			const makeAnnotations = d3.annotation()
@@ -232,13 +297,12 @@
 			if ( fuel=='Electricity' ) { 
 					cyl='0';
 				}
-			console.log("FuelType is:"+fuel);
-			console.log("Cylinders is:"+cyl);
 			
 			//Refresh graph elements
-			d3.selectAll("g > *").remove();
-			
-			d3.select("svg")  
+			d3.select("#svg1").selectAll("g > *").remove();
+
+			//Adding bars
+			d3.select("#svg1")  
 			  .append("g")
 			  .attr("transform","translate("+50+","+50+")")
 			  .selectAll("rect")
@@ -255,9 +319,8 @@
 			  .on('mouseout', tip.hide)
 			  .call(tip);
 			  
-
-		    
-			d3.select("svg")
+		    //Adding Y-axis
+			d3.select("#svg1")
 			  .attr("height",600+2*50)
 			  .attr("width",880+2*50)  
 			  .append("g")
@@ -268,8 +331,9 @@
 			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
 			  .attr("transform", "translate("+ (50/2) +","+(600+2*50/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
 			  .text("AverageCityMPG");
-   
-			d3.select("svg")
+			
+			//Adding X-axis
+			d3.select("#svg1")
 			  .attr("height",600+2*50)
 			  .attr("width",880+2*50)  
 			  .append("g")
@@ -280,8 +344,9 @@
 			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
 			  .attr("transform", "translate("+ (880+2*50/2) +","+(600+2*50-(50/3))+")")  // centre below axis
 			  .text("Car Make");
-			  
-			d3.select("svg")
+			
+			//Adding Annotations
+			d3.select("#svg1")
 			  .append("g")
 			  //.attr("class", "annotation-group")
 			  .call(makeAnnotations);
@@ -294,16 +359,166 @@
 				 return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-30)";
 			 });
 		
-			/* now add titles to the axes
-			d3.append("text")
-				.attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-				.attr("transform", "translate("+ (padding/2) +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
-				.text("AverageCityMPG");
-			d3.append("text")
-				.attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-				.attr("transform", "translate("+ (width/2) +","+(height-(padding/3))+")")  // centre below axis
-				.text("Car Make");*/
 		}
 		</script>
+		<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest AverageHighwayMPH of the Fuel & Cylinders selected : <input type="button" onclick='fnAvgHwyMPG()' value="Chart"> </p>
+	
+	<svg id="svg2" width=980 height=700>
+	</svg>
+	<div id="tooltip"></div>
+	<script>
+		
+		  async function fnAvgHwyMPG() {
+			var f = "https://isham3.github.io/narrative/InputData_Final.csv";
+		   //console.log(data[0]);
+			const data = await d3.csv(f);
+			
+			//Setting the scale variables
+			var xs = d3.scaleBand()
+			           .domain(['Acura','Alfa Romeo','Aston Martin','Audi','Bentley','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge','Ferrari','Fiat','Ford',
+					   'Genesis','GMC','Honda','Hyundai','Infiniti','Jaguar','Jeep','Kia','Lamborghini','Land Rover','Lexus','Lincoln','Lotus','Maserati','Mazda','McLaren','Mercedes','MINI','Mitsubishi','Nissan','Porsche','Ram','Rolls-Royce','Roush','smart','Subaru','Tesla','Toyota','Volswagen','Volvo'])
+					   .range([0,880]);
+			var ys = d3.scaleLinear()
+			  .domain([10,150])
+			  .range([600,0]);
+			
+			//Setting the Axis variables
+			var xAxis = d3.axisBottom(xs);
+						 			
+			var yAxis = d3.axisLeft(ys)
+						  .tickValues([10,30,50,70,90,110,130,150]);
+						  	
+            var barWidth = xs.bandwidth();
+			
+			var tip = d3.tip()
+					  .attr('class', 'd3-tip')
+					  .offset([-10, 0])
+					  .html(function(d) {
+						return "<strong>AverageHighwayMPG for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageHighwayMPG + "</span>";
+					  });
+						
+			// Features of the annotation
+			const annotations = [
+									{
+									  note: {
+										label: "Chart shows AverageHighwayMPG for cars with chosen Fuel & Cylinders ",
+										title: "",
+										wrap: 150
+									  },
+									  connector: {
+										end: "dot",
+										type: "curve",
+										//can also add a curve type, e.g. curve: d3.curveStep
+										points: [[100, 14],[190, 52]]
+									  },
+									  x: 50,
+									  y: 25,
+									  dy: 137,
+									  dx: 262
+										
+									}].map(function(d){ d.color = "black"; return d})
+
+			// Add annotation to the chart
+			const makeAnnotations = d3.annotation()
+									  //.type(d3.annotationLabel)
+									  .annotations(annotations);
+			
+			//Reading the input parameters
+			var radios1 = document.getElementsByName("FuleType");
+			var fuel = " ";
+			var radios2 = document.getElementsByName("Cylinders");
+			var cyl = " ";
+			
+			for (var i = 0, length = radios1.length; i < length; i++)
+			{
+			 if (radios1[i].checked)
+			 {
+			  // do whatever you want with the checked radio
+			  fuel= radios1[i].value;
+			  
+			  // only one radio can be logically checked, don't check the rest
+			  break;
+			 }
+			}						  
+			
+			for (var i = 0, length = radios2.length; i < length; i++)
+			{
+			 if (radios2[i].checked)
+			 {
+			  // do whatever you want with the checked radio
+			  cyl= radios2[i].value;
+			  // only one radio can be logically checked, don't check the rest
+			  break;
+			 }
+			}	
+			
+			//Default cylinders for Electric to 0
+			if ( fuel=='Electricity' ) { 
+					cyl='0';
+				}
+			
+			//Refresh graph elements
+			d3.select("#svg2").selectAll("g > *").remove();
+
+			//Adding bars
+			d3.select("#svg2")  
+			  .append("g")
+			  .attr("transform","translate("+50+","+50+")")
+			  .selectAll("rect")
+			  .data(data)
+			  .enter()
+			  .append("rect")
+			  .filter(function(d) { return d.Fuel == fuel; })
+			  .filter(function(d) { return d.EngineCylinders == +cyl; })
+			  .attr("x",function(d,i){return xs(d.Make);})
+			  .attr("y",function(d,i){return ys(+d.ActualAverageHighwayMPG);})
+			  .attr("width",barWidth)
+			  .attr("height",function(d,i){return 600-ys(+d.ActualAverageHighwayMPG);})
+			  .on('mouseover',tip.show)
+			  .on('mouseout', tip.hide)
+			  .call(tip);
+			  
+		    //Adding Y-axis
+			d3.select("#svg2")
+			  .attr("height",600+2*50)
+			  .attr("width",880+2*50)  
+			  .append("g")
+			  .attr("class", "yAxis axis")	
+			  .attr("transform","translate("+50+","+50+")")	  
+			  .call(yAxis)
+			  .append("text")
+			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+			  .attr("transform", "translate("+ (50/2) +","+(600+2*50/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+			  .text("AverageCityMPG");
+			
+			//Adding X-axis
+			d3.select("#svg2")
+			  .attr("height",600+2*50)
+			  .attr("width",880+2*50)  
+			  .append("g")
+			  .attr("class", "xAxis axis")		  
+			  .attr("transform","translate("+50+","+650+")")
+			  .call(xAxis)
+			  .append("text")
+			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+			  .attr("transform", "translate("+ (880+2*50/2) +","+(600+2*50-(50/3))+")")  // centre below axis
+			  .text("Car Make");
+			
+			//Adding Annotations
+			d3.select("#svg2")
+			  .append("g")
+			  //.attr("class", "annotation-group")
+			  .call(makeAnnotations);
+			  
+			// now rotate text on x axis
+			// first move the text left so no longer centered on the tick
+			// then rotate up to get 45 degrees.
+			d3.selectAll(".xAxis text")  // select all the text elements for the xaxis
+			  .attr("transform", function(d) {
+				 return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-30)";
+			 });
+		}
+	</script>
+	
 	</body>
 </html>
