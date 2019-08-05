@@ -300,26 +300,8 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			
 			//Refresh graph elements
 			d3.select("#svg1").selectAll("g > *").remove();
-
-			//Adding bars
-			d3.select("#svg1")  
-			  .append("g")
-			  .attr("transform","translate("+50+","+50+")")
-			  .selectAll("rect")
-			  .data(data)
-			  .enter()
-			  .append("rect")
-			  .filter(function(d) { return d.Fuel == fuel; })
-			  .filter(function(d) { return d.EngineCylinders == +cyl; })
-			  .attr("x",function(d,i){return xs(d.Make);})
-			  .attr("y",function(d,i){return ys(+d.ActualAverageCityMPG);})
-			  .attr("width",barWidth)
-			  .attr("height",function(d,i){return 600-ys(+d.ActualAverageCityMPG);})
-			  .on('mouseover',tip.show)
-			  .on('mouseout', tip.hide)
-			  .call(tip);
-			  
-		    //Adding Y-axis
+						  
+		    	//Adding Y-axis
 			d3.select("#svg1")
 			  .attr("height",600+2*50)
 			  .attr("width",880+2*50)  
@@ -344,12 +326,6 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
 			  .attr("transform", "translate("+ (880+2*50/2) +","+(600+2*50-(50/3))+")")  // centre below axis
 			  .text("Car Make");
-			
-			//Adding Annotations
-			d3.select("#svg1")
-			  .append("g")
-			  //.attr("class", "annotation-group")
-			  .call(makeAnnotations);
 			  
 			// now rotate text on x axis
 			// first move the text left so no longer centered on the tick
@@ -358,7 +334,32 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			  .attr("transform", function(d) {
 				 return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-30)";
 			 });
-		
+			
+			//Adding bars
+			d3.select("#svg1")  
+			  .append("g")
+			  .attr("transform","translate("+50+","+50+")")
+			  .selectAll("rect")
+			  .data(data)
+			  .enter()
+			  .append("rect")
+			  .filter(function(d) { return d.Fuel == fuel; })
+			  .filter(function(d) { return d.EngineCylinders == +cyl; })
+			  .attr("x",function(d,i){return xs(d.Make);})
+			  .attr("y",function(d,i){return ys(+d.ActualAverageCityMPG);})
+			  .attr("width",barWidth)
+			  .attr("height",function(d,i){return 600-ys(+d.ActualAverageCityMPG);})
+			  .on('mouseover',tip.show)
+			  .on('mouseout', tip.hide)
+			  .call(tip);
+			  
+			//Adding Annotations
+			d3.select("#svg1")
+			  .append("g")
+			  //.attr("class", "annotation-group")
+			  .call(makeAnnotations);
+			  
+				
 		}
 		</script>
 		<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest Average Highway Mileage of the Fuel and Cylinders selected : <input type="button" onclick='fnAvgHwyMPG()' value="Chart"> </p>
@@ -460,25 +461,8 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			//Refresh graph elements
 			d3.select("#svg2").selectAll("g > *").remove();
 
-			//Adding bars
-			d3.select("#svg2")  
-			  .append("g")
-			  .attr("transform","translate("+50+","+50+")")
-			  .selectAll("rect")
-			  .data(data)
-			  .enter()
-			  .append("rect")
-			  .filter(function(d) { return d.Fuel == fuel; })
-			  .filter(function(d) { return d.EngineCylinders == +cyl; })
-			  .attr("x",function(d,i){return xs(d.Make);})
-			  .attr("y",function(d,i){return ys(+d.ActualAverageHighwayMPG);})
-			  .attr("width",barWidth)
-			  .attr("height",function(d,i){return 600-ys(+d.ActualAverageHighwayMPG);})
-			  .on('mouseover',tip.show)
-			  .on('mouseout', tip.hide)
-			  .call(tip);
-			  
-		    //Adding Y-axis
+					  
+		        //Adding Y-axis
 			d3.select("#svg2")
 			  .attr("height",600+2*50)
 			  .attr("width",880+2*50)  
@@ -504,12 +488,6 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			  .attr("transform", "translate("+ (880+2*50/2) +","+(600+2*50-(50/3))+")")  // centre below axis
 			  .text("Car Make");
 			
-			//Adding Annotations
-			d3.select("#svg2")
-			  .append("g")
-			  //.attr("class", "annotation-group")
-			  .call(makeAnnotations);
-			  
 			// now rotate text on x axis
 			// first move the text left so no longer centered on the tick
 			// then rotate up to get 45 degrees.
@@ -517,6 +495,32 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			  .attr("transform", function(d) {
 				 return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-30)";
 			 });
+			  
+			//Adding bars
+			d3.select("#svg2")  
+			  .append("g")
+			  .attr("transform","translate("+50+","+50+")")
+			  .selectAll("rect")
+			  .data(data)
+			  .enter()
+			  .append("rect")
+			  .filter(function(d) { return d.Fuel == fuel; })
+			  .filter(function(d) { return d.EngineCylinders == +cyl; })
+			  .attr("x",function(d,i){return xs(d.Make);})
+			  .attr("y",function(d,i){return ys(+d.ActualAverageHighwayMPG);})
+			  .attr("width",barWidth)
+			  .attr("height",function(d,i){return 600-ys(+d.ActualAverageHighwayMPG);})
+			  .on('mouseover',tip.show)
+			  .on('mouseout', tip.hide)
+			  .call(tip);
+			
+			//Adding Annotations
+			d3.select("#svg2")
+			  .append("g")
+			  //.attr("class", "annotation-group")
+			  .call(makeAnnotations);
+			  
+			
 		}
 	</script>
 	
