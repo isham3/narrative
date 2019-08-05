@@ -6,8 +6,20 @@
 		<!--this doesn't seem to help-->
 		<meta http-equiv="Access-Control-Allow-Origin" content="*"/>
 		<title>Fuel Efficiency | 2017</title>
+		<!--script src='https://d3js.org/d3.v5.min.js'></script-->
 		<script src='https://d3js.org/d3.v5.min.js'></script>
-		<style> rect {fill: lightblue; stroke: black; }</style>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.3.2/d3-annotation.min.js"></script>
+		<style> rect {fill: #E52B50; stroke: black; }
+			#tooltip {
+						opacity :0;
+						position :absolute;
+						text-align : center;
+						width :60px; height:40px;
+						background :white;
+						border :0px;
+					 }
+		</style>
 		<style type="text/css">
 					
 					.axis path,
@@ -21,7 +33,46 @@
 						font-family: sans-serif;
 						font-size: 9px;
 					}
+					
+					.rect:hover {
+						  fill: orangered ;
+						}
+					.d3-tip {
+						  line-height: 1;
+						  font-weight: bold;
+						  padding: 12px;
+						  background: rgba(0, 0, 0, 0.8);
+						  color: #fff;
+						  border-radius: 2px;
+						}
 
+						/* Creates a small triangle extender for the tooltip */
+						.d3-tip:after {
+						  box-sizing: border-box;
+						  display: inline;
+						  font-size: 10px;
+						  width: 100%;
+						  line-height: 1;
+						  color: rgba(0, 0, 0, 0.8);
+						  content: "\25BC";
+						  position: absolute;
+						  text-align: center;
+						}
+
+						/* Style northward tooltips differently */
+						.d3-tip.n:after {
+						  margin: -1px 0 0 0;
+						  top: 100%;
+						  left: 0;
+						 }
+						 
+						 .annotation-note-label, text.label {
+							  font-weight: bold;
+							}
+
+							text.label {
+							  font-size: 1.0em;
+							}
 				</style>
 	</head>
 	<body bgcolor="F0F8FF">
@@ -41,6 +92,24 @@
 		</font>
 		</form>
 	</div>
+	<script>
+		// assign onclick handler to FuelType Radiobutton
+		document.getElementsByName('FuleType').onclick = function() {
+		// is hazard checkbox checked?
+			var fuel = this.checked; // true or false
+			// get list of radio buttons with name 'ship'
+			var radios = this.form.elements['Cylinders'];
+			// loop through list of radio buttons
+			for (var i=0, len=radios.length; i<len; i++) {
+				var r = radios[i]; // current radio button
+				if ( fuel.value=='Electricity' ) { // hazard checkbox checked
+					r.value='0';
+					r.disabled = true; // set disabled
+				
+				}
+			}
+		}
+	</script>
 	
 
 	<form>
@@ -57,51 +126,80 @@
 	</form>
 	<p><font face="verdana" color="black"> Let's check the best car in 2017 with highest AverageCityMPH : <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
 	
-	<svg width=700 height=700>
+	<svg width=980 height=700>
 	</svg>
+	<div id="tooltip"></div>
 	<script>
-		// assign onclick handler to hazard checkbox
-	document.getElementByName('FuleType').onclick = function() {
-
-    // is hazard checkbox checked?
-    var fuel = this.checked; // true or false
-
-    // get list of radio buttons with name 'ship'
-    var radios = this.form.elements['Cylinders'];
-
-    // loop through list of radio buttons
-    for (var i=0, len=radios.length; i<len; i++) {
-        var r = radios[i]; // current radio button
-
-        if ( fuel.value=='Electricity' ) { // hazard checkbox checked
-		    r.value='0';
-            r.disabled = true; // set disabled
 		
-		}
-	}
-		async function fnAvgCityMPG() {
+		  async function fnAvgCityMPG() {
 			var f = "https://isham3.github.io/narrative/InputData_Final.csv";
+		   //console.log(data[0]);
 			const data = await d3.csv(f);
-			//const data = await d3.csv("https://flunky.github.io/cars2017.csv");
-			//Setting the variables
+			
+			
+			
+			//Setting the scale variables
 			var xs = d3.scaleBand()
-			           .domain(['Audi','Bentley','BMW','Cadillac','Chevrolet','Chrysler','Dodge','Ferrari','Ford',
-					   'Genesis','GMC','Infiniti','Jaguar','Jeep','Kia','Land Rover','Lexus','Maserati','McLaren','Mercedes','Nissan','Porsche','Ram','Roush','Toyota'])
-					   .range([0,600]);
-
+			           .domain(['Acura','Alfa Romeo','Aston Martin','Audi','Bentley','BMW','Buick','Cadillac','Chevrolet','Chrysler','Dodge','Ferrari','Fiat','Ford',
+					   'Genesis','GMC','Honda','Hyundai','Infiniti','Jaguar','Jeep','Kia','Lamborghini','Land Rover','Lexus','Lincoln','Lotus','Maserati','Mazda','McLaren','Mercedes','MINI','Mitsubishi','Nissan','Porsche','Ram','Rolls-Royce','Roush','smart','Subaru','Tesla','Toyota','Volswagen','Volvo'])
+					   .range([0,880]);
 			var ys = d3.scaleLinear()
 			  .domain([10,150])
 			  .range([600,0]);
 			
-			//Setting the Axis
+			//Setting the Axis variables
 			var xAxis = d3.axisBottom(xs);
 						 			
 			var yAxis = d3.axisLeft(ys)
-						  .tickValues([10,30,50,70,90,110,130,150])
-						  .ticks(8).tickFormat(d3.format("~s"));	
+						  .tickValues([10,30,50,70,90,110,130,150]);
+						  	
             var barWidth = xs.bandwidth();
 			
-			//Reading the parameters
+			var tip = d3.tip()
+					  .attr('class', 'd3-tip')
+					  .offset([-10, 0])
+					  .html(function(d) {
+						return "<strong>AverageCityMPG for "+ d.Make+" is: </strong> <span style='color:red'>" + d.ActualAverageCityMPG + "</span>";
+					  });
+					  
+			var filteredFuel = data.filter(function (data) {
+												return (data.Fuel ==fuel);
+											});
+											
+			var filtered = data.filter(function (data) {
+												return (data.EngineCylinders ==+cyl);
+											});
+			var highestMPG = Math.max(+filtered.ActualAverageCityMPG);
+			
+			console.log(highestMPG);
+			
+			// Features of the annotation
+			const annotations = [
+									{
+									  note: {
+										label: "Chart shows AverageCityMPG for cars with chosen Fuel & Cylinders ",
+										title: "",
+										wrap: 150
+									  },
+									  connector: {
+										end: "dot",
+										type: "curve",
+										//can also add a curve type, e.g. curve: d3.curveStep
+										points: [[100, 14],[190, 52]]
+									  },
+									  x: 50,
+									  y: 25,
+									  dy: 137,
+									  dx: 262
+										
+									}].map(function(d){ d.color = "blue"; return d})
+
+			// Add annotation to the chart
+			const makeAnnotations = d3.annotation()
+									  //.type(d3.annotationLabel)
+									  .annotations(annotations);
+			
+			//Reading the input parameters
 			var radios1 = document.getElementsByName("FuleType");
 			var fuel = " ";
 			var radios2 = document.getElementsByName("Cylinders");
@@ -113,7 +211,7 @@
 			 {
 			  // do whatever you want with the checked radio
 			  fuel= radios1[i].value;
-
+			  
 			  // only one radio can be logically checked, don't check the rest
 			  break;
 			 }
@@ -125,41 +223,68 @@
 			 {
 			  // do whatever you want with the checked radio
 			  cyl= radios2[i].value;
-
 			  // only one radio can be logically checked, don't check the rest
 			  break;
 			 }
 			}	
-				
+			
+			//Default cylinders for Electric to 0
+			if ( fuel=='Electricity' ) { 
+					cyl='0';
+				}
 			console.log("FuelType is:"+fuel);
 			console.log("Cylinders is:"+cyl);
 			
-			d3.select("svg")
+			//Refresh graph elements
+			d3.selectAll("g > *").remove();
+			
+			d3.select("svg")  
 			  .append("g")
 			  .attr("transform","translate("+50+","+50+")")
 			  .selectAll("rect")
 			  .data(data)
 			  .enter()
+			  .append("rect")
+			  .filter(function(d) { return d.Fuel == fuel; })
+			  .filter(function(d) { return d.EngineCylinders == +cyl; })
+			  .attr("x",function(d,i){return xs(d.Make);})
+			  .attr("y",function(d,i){return ys(+d.ActualAverageCityMPG);})
 			  .attr("width",barWidth)
-			  .attr("height",function(d){return ys(parseInt(d.AverageCityMPG));})	
-			  .attr("x",function(d,i){return barWidth+xs(d);})
-			  .attr("y",function(d){return 600-ys(parseInt(d.AverageCityMPG));});
+			  .attr("height",function(d,i){return 600-ys(+d.ActualAverageCityMPG);})
+			  .on('mouseover',tip.show)
+			  .on('mouseout', tip.hide)
+			  .call(tip);
+			  
+
 		    
 			d3.select("svg")
 			  .attr("height",600+2*50)
-			  .attr("width",600+2*50)  
+			  .attr("width",880+2*50)  
 			  .append("g")
 			  .attr("class", "yAxis axis")	
 			  .attr("transform","translate("+50+","+50+")")	  
-			  .call(yAxis); 
+			  .call(yAxis)
+			  .append("text")
+			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+			  .attr("transform", "translate("+ (50/2) +","+(600+2*50/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
+			  .text("AverageCityMPG");
    
 			d3.select("svg")
 			  .attr("height",600+2*50)
-			  .attr("width",600+2*50)  
+			  .attr("width",880+2*50)  
 			  .append("g")
 			  .attr("class", "xAxis axis")		  
 			  .attr("transform","translate("+50+","+650+")")
-			  .call(xAxis);
+			  .call(xAxis)
+			  .append("text")
+			  .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+			  .attr("transform", "translate("+ (880+2*50/2) +","+(600+2*50-(50/3))+")")  // centre below axis
+			  .text("Car Make");
+			  
+			d3.select("svg")
+			  .append("g")
+			  //.attr("class", "annotation-group")
+			  .call(makeAnnotations);
 			  
 			// now rotate text on x axis
 			// first move the text left so no longer centered on the tick
@@ -169,16 +294,15 @@
 				 return "translate(" + this.getBBox().height*-2 + "," + this.getBBox().height + ")rotate(-30)";
 			 });
 		
-			// now add titles to the axes
+			/* now add titles to the axes
 			d3.append("text")
 				.attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
 				.attr("transform", "translate("+ (padding/2) +","+(height/2)+")rotate(-90)")  // text is drawn off the screen top left, move down and out and rotate
 				.text("AverageCityMPG");
-
 			d3.append("text")
 				.attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
 				.attr("transform", "translate("+ (width/2) +","+(height-(padding/3))+")")  // centre below axis
-				.text("Car Make");
+				.text("Car Make");*/
 		}
 		</script>
 	</body>
