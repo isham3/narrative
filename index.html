@@ -168,26 +168,7 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 		</font>
 		</form>
 	</div>
-	<script>
-		// assign onclick handler to FuelType Radiobutton
-		document.getElementsByName('FuleType').onclick = function() {
-		// is hazard checkbox checked?
-			var fuel = this.checked; // true or false
-			// get list of radio buttons with name 'ship'
-			var radios = this.form.elements['Cylinders'];
-			// loop through list of radio buttons
-			for (var i=0, len=radios.length; i<len; i++) {
-				var r = radios[i]; // current radio button
-				if ( fuel.value=='Electricity' ) { // hazard checkbox checked
-					r.value='0';
-					r.disabled = true; // set disabled
-				
-				}
-			}
-		}
-	</script>
 	
-
 	<form>
 	 <font face="Helvetica" color="black">
 	  Select the Number of Cylinders you want to have in your car.
@@ -229,7 +210,7 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			var yAxis = d3.axisLeft(ys)
 						  .tickValues([10,30,50,70,90,110,130,150]);
 						  	
-            var barWidth = xs.bandwidth();
+            		var barWidth = xs.bandwidth();
 			
 			var tip = d3.tip()
 					  .attr('class', 'd3-tip')
@@ -237,32 +218,7 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 					  .html(function(d) {
 						return "<strong>Average City Mileage for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageCityMPG + "</span>";
 					  });
-						
-			// Features of the annotation
-			const annotations = [
-									{
-									  note: {
-										label: "Chart shows Average City Mileage for cars with chosen Fuel and Cylinders ",
-										title: "",
-										wrap: 150
-									  },
-									  connector: {
-										end: "dot",
-										type: "curve",
-										//can also add a curve type, e.g. curve: d3.curveStep
-										points: [[100, 14],[190, 52]]
-									  },
-									  x: 50,
-									  y: 25,
-									  dy: 137,
-									  dx: 262
-										
-									}].map(function(d){ d.color = "black"; return d})
-
-			// Add annotation to the chart
-			const makeAnnotations = d3.annotation()
-									  //.type(d3.annotationLabel)
-									  .annotations(annotations);
+			
 			
 			//Reading the input parameters
 			var radios1 = document.getElementsByName("FuleType");
@@ -298,6 +254,31 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 					cyl='0';
 				}
 			
+			// Features of the annotation
+			const annotations = [
+									{
+									  note: {
+										label: "Chart shows AverageCityMPG for cars with Fuel:"+fuel +"  Cylinders: "+cyl,
+										title: "",
+										wrap: 150
+									  },
+									  connector: {
+										end: "dot",
+										type: "curve",
+										//can also add a curve type, e.g. curve: d3.curveStep
+										points: [[100, 14],[190, 52]]
+									  },
+									  x: 50,
+									  y: 25,
+									  dy: 137,
+									  dx: 262
+										
+									}].map(function(d){ d.color = "black"; return d});
+			
+			// Add annotation to the chart
+			const makeAnnotations = d3.annotation()
+									  //.type(d3.annotationLabel)
+									  .annotations(annotations);
 			//Refresh graph elements
 			d3.select("#svg1").selectAll("g > *").remove();
 						  
@@ -389,7 +370,7 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 			var yAxis = d3.axisLeft(ys)
 						  .tickValues([10,30,50,70,90,110,130,150]);
 						  	
-            var barWidth = xs.bandwidth();
+            		var barWidth = xs.bandwidth();
 			
 			var tip = d3.tip()
 					  .attr('class', 'd3-tip')
@@ -398,31 +379,6 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 						return "<strong>Average Highway Mileage for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageHighwayMPG + "</span>";
 					  });
 						
-			// Features of the annotation
-			const annotations = [
-									{
-									  note: {
-										label: "Chart shows Average Highway Mileage for cars with chosen Fuel and Cylinders ",
-										title: "",
-										wrap: 150
-									  },
-									  connector: {
-										end: "dot",
-										type: "curve",
-										//can also add a curve type, e.g. curve: d3.curveStep
-										points: [[100, 14],[190, 52]]
-									  },
-									  x: 50,
-									  y: 25,
-									  dy: 137,
-									  dx: 262
-										
-									}].map(function(d){ d.color = "black"; return d})
-
-			// Add annotation to the chart
-			const makeAnnotations = d3.annotation()
-									  //.type(d3.annotationLabel)
-									  .annotations(annotations);
 			
 			//Reading the input parameters
 			var radios1 = document.getElementsByName("FuleType");
@@ -458,6 +414,32 @@ and the Average Hightway Mileage vertically on a logarithmic scale. </p>
 					cyl='0';
 				}
 			
+			// Features of the annotation
+			const annotations = [
+									{
+									  note: {
+										label: "Chart shows AverageCityMPG for cars with Fuel:"+fuel +"  Cylinders: "+cyl,
+										title: "",
+										wrap: 150
+									  },
+									  connector: {
+										end: "dot",
+										type: "curve",
+										//can also add a curve type, e.g. curve: d3.curveStep
+										points: [[100, 14],[190, 52]]
+									  },
+									  x: 50,
+									  y: 25,
+									  dy: 137,
+									  dx: 262
+										
+									}].map(function(d){ d.color = "black"; return d});
+			
+			// Add annotation to the chart
+			const makeAnnotations = d3.annotation()
+									  //.type(d3.annotationLabel)
+									  .annotations(annotations);
+			  
 			//Refresh graph elements
 			d3.select("#svg2").selectAll("g > *").remove();
 
