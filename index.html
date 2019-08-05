@@ -80,15 +80,15 @@
 	<h2><font face="Helvetica" color="#BA4A00">Most Fuel Efficient Cars of 2017</font></h2>
 	
 	<img style = "width: 75%; height: 5%; ; " src="https://isham3.github.io/narrative/action-asphalt-automobile-593172.jpg"  alt="Photo by Taras Makarenko from Pexels"  />	
-	<p><font face="Helvetica" color="black">We collected data such as Fuel Type, # of Cylinders, AverageHighwayMPH, AverageCityMPH for different car companies in the year 2017. </font></p>
-	<p><font face="Helvetica" color="black"> Below depicted is a scatter-plot of all the cars plotting the Average City MPG horizontally on a logarithmic scale
-and the Average Hightway MPG vertically on a logarithmic scale. </p>
-	<h4><font face="Helvetica" color="black"> Scatterplot of HighwayMPG vs CityMPG for the cars </font></h4>
+	<p><font face="Helvetica" color="black">We have collected data such as Fuel Type, No. of Cylinders, Average Highway Mileage and Average City Mileage for different car companies in the year 2017. </font></p>
+	<p><font face="Helvetica" color="black"> Below depicted is a scatter-plot of all the cars plotting the Average City Mileage horizontally on a logarithmic scale
+and the Average Hightway Mileage vertically on a logarithmic scale. </p>
+	<h4><font face="Helvetica" color="black"> Scatterplot of Highway vs City Mileage for the cars </font></h4>
 	<svg id="svg3" width=800 height=800>
 	</svg>
 	<script>
 		async function init() {
-			const data = await d3.csv("https://flunky.github.io/cars2017.csv");
+			const data = await d3.csv("https://isham3.github.io/narrative/InputData_Final.csv");
 			var xs = d3.scaleLog()
 			  .domain([10,150])
 			  .range([0,700])
@@ -157,7 +157,7 @@ and the Average Hightway MPG vertically on a logarithmic scale. </p>
 		}
 	</script>
 	
-	<p><font face="Helvetica" color="black">We have also plotted this data using different parameters such as Fuel & # of cylinders to depict the best car in terms of AverageHighwayMPH/AverageCityMPH. </font></p>
+	<p><font face="Helvetica" color="black">We have also plotted this data using different parameters such as Fuel and No. of cylinders to depict the best car in terms of Average Highway Mileage and Average City Mileage. </font></p>
 	
 	<div class="container">
 		<form>
@@ -200,7 +200,7 @@ and the Average Hightway MPG vertically on a logarithmic scale. </p>
 	  <input type="radio" name="Cylinders" value="12"> 12<br>
 	</font>
 	</form>
-	<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest AverageCityMPH of the Fule & Cylinders selected : <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
+	<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest Average City Mileage of the Fuel and Cylinders selected : <input type="button" onclick='fnAvgCityMPG()' value="Chart"> </p>
 	
 	<svg id="svg1" width=980 height=700>
 	</svg>
@@ -235,14 +235,14 @@ and the Average Hightway MPG vertically on a logarithmic scale. </p>
 					  .attr('class', 'd3-tip')
 					  .offset([-10, 0])
 					  .html(function(d) {
-						return "<strong>AverageCityMPG for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageCityMPG + "</span>";
+						return "<strong>Average City Mileage for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageCityMPG + "</span>";
 					  });
 						
 			// Features of the annotation
 			const annotations = [
 									{
 									  note: {
-										label: "Chart shows AverageCityMPG for cars with chosen Fuel & Cylinders ",
+										label: "Chart shows Average City Mileage for cars with chosen Fuel and Cylinders ",
 										title: "",
 										wrap: 150
 									  },
@@ -361,7 +361,7 @@ and the Average Hightway MPG vertically on a logarithmic scale. </p>
 		
 		}
 		</script>
-		<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest AverageHighwayMPH of the Fuel & Cylinders selected : <input type="button" onclick='fnAvgHwyMPG()' value="Chart"> </p>
+		<p><font face="Helvetica" color="black"> Let's check the best car in 2017 with highest Average Highway Mileage of the Fuel and Cylinders selected : <input type="button" onclick='fnAvgHwyMPG()' value="Chart"> </p>
 	
 	<svg id="svg2" width=980 height=700>
 	</svg>
@@ -394,14 +394,14 @@ and the Average Hightway MPG vertically on a logarithmic scale. </p>
 					  .attr('class', 'd3-tip')
 					  .offset([-10, 0])
 					  .html(function(d) {
-						return "<strong>AverageHighwayMPG for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageHighwayMPG + "</span>";
+						return "<strong>Average Highway Mileage for "+ d.Make+" is: </strong> <span style='color:#0DC706'>" + d.ActualAverageHighwayMPG + "</span>";
 					  });
 						
 			// Features of the annotation
 			const annotations = [
 									{
 									  note: {
-										label: "Chart shows AverageHighwayMPG for cars with chosen Fuel & Cylinders ",
+										label: "Chart shows Average Highway Mileage for cars with chosen Fuel and Cylinders ",
 										title: "",
 										wrap: 150
 									  },
